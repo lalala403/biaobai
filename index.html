@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浪漫表白</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        /* 背景渐变色 */
+        body {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            border: 1px solid rgba(255, 182, 193, 0.5);
+        }
+
+        /* 添加消息弹窗样式 */
+        .message-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: popup 0.5s ease-out;
+            border: 2px solid white;
+        }
+
+        @keyframes popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+
+            70% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* 按钮填满中心样式 - 调整大小 */
+        .btn.full-center {
+            position: fixed;
+            top: 70%;
+            /* 从50%改为70%，使按钮位于页面中间靠下位置 */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            /* 从60%改为40%，使按钮大小更合适 */
+            height: 60px;
+            /* 从80px改为60px，降低高度 */
+            font-size: 20px;
+            /* 从24px改为20px，使字体更合适 */
+            z-index: 100;
+            transition: all 0.5s ease;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.5);
+            border: 2px solid white;
+            display: flex;
+            /* 新增：使用Flexbox布局 */
+            justify-content: center;
+            /* 新增：水平居中 */
+            align-items: center;
+            /* 新增：垂直居中 */
+            white-space: nowrap;
+        }
+
+        /* 添加拥抱形象样式 */
+        .hugging-characters {
+            display: none;
+            /* 默认隐藏 */
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .character1,
+        .character2 {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background-color: white;
+            border-radius: 50%;
+            border: 1px solid #eee;
+        }
+
+        .character1 {
+            left: 10px;
+            z-index: 2;
+        }
+
+        .character2 {
+            right: 10px;
+            top: 20px;
+            z-index: 1;
+        }
+
+        .character1 .eyes,
+        .character2 .eyes {
+            position: absolute;
+            width: 40px;
+            height: 8px;
+            top: 30px;
+        }
+
+        .character1 .eyes {
+            left: 15px;
+        }
+
+        .character2 .eyes {
+            left: 15px;
+        }
+
+        .character1 .eyes:before,
+        .character1 .eyes:after,
+        .character2 .eyes:before,
+        .character2 .eyes:after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 50%;
+        }
+
+        .character1 .eyes:before,
+        .character2 .eyes:before {
+            left: 5px;
+        }
+
+        .character1 .eyes:after,
+        .character2 .eyes:after {
+            right: 5px;
+        }
+
+        .character1 .mouth,
+        .character2 .mouth {
+            position: absolute;
+            width: 20px;
+            height: 10px;
+            border-radius: 0 0 10px 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .character1 .mouth {
+            bottom: 20px;
+            left: 25px;
+        }
+
+        .character2 .mouth {
+            bottom: 20px;
+            left: 25px;
+        }
+
+        /* 爱心效果 */
+        .heart {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff6b6b;
+            font-size: 24px;
+            z-index: 3;
+            animation: heartbeat 1s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                transform: translateX(-50%) scale(1.2);
+            }
+
+            100% {
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        /* 花瓣效果 */
+        .petal {
+            position: fixed;
+            z-index: 999;
+            animation: falling linear infinite;
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateY(-10%) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0.6;
+            }
+        }
+
+        /* 美化按钮 */
+        .btn {
+            padding: 12px 35px;
+            border-radius: 30px;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+        }
+
+        .accept {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+        }
+
+        .decline {
+            background: linear-gradient(135deg, #4dabf7 0%, #69dbff 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+            border: 2px solid white;
+        }
+
+        /* 美化问题文本 */
+        .question-text {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #ff6b6b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff6b6b, 0 0 20px #ff6b6b;
+            }
+
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 15px #ff758c, 0 0 20px #ff758c, 0 0 25px #ff758c;
+            }
+        }
+
+        /* 浮动爱心 */
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 107, 107, 0.3);
+            font-size: 20px;
+            animation: float 10s linear infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 花瓣容器 -->
+    <div id="petalsContainer"></div>
+
+    <!-- 背景音乐 -->
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1824045033.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <!-- 浮动爱心背景 -->
+        <div class="floating-hearts" id="floatingHearts"></div>
+
+        <div class="dialog-box">
+            <div class="close-btn">×</div>
+            <div class="more-btn">...</div>
+            <div class="character">
+                <div class="character-image">
+                    <!-- 简单的卡通形象 -->
+                    <div class="cartoon-character" id="character">
+                        <div class="head"></div>
+                        <div class="eyes"></div>
+                        <div class="mouth"></div>
+                    </div>
+
+                    <!-- 添加拥抱形象 -->
+                    <div class="hugging-characters" id="huggingCharacters">
+                        <div class="character1">
+                            <div class="eyes"></div>
+                            <div class="mouth"></div>
+                        </div>
+                        <div class="character2">
+                            <div class="eyes"></div>
+                            <div class="mouth"></div>
+                        </div>
+                        <div class="heart">♥</div>
+                    </div>
+                </div>
+                <div class="heart-icon">♡</div>
+            </div>
+            <div class="question-text">
+                你愿意成为我的女朋友吗？
+            </div>
+            <div class="buttons" id="buttonsContainer">
+                <button class="btn accept" id="acceptBtn">愿意</button>
+                <button class="btn decline" id="declineBtn">不愿意</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const character = document.getElementById('character');
+        const huggingCharacters = document.getElementById('huggingCharacters');
+        const acceptBtn = document.getElementById('acceptBtn');
+        const declineBtn = document.getElementById('declineBtn');
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        const bgMusic = document.getElementById('bgMusic');
+        const petalsContainer = document.getElementById('petalsContainer');
+        const floatingHearts = document.getElementById('floatingHearts');
+
+        // 创建花瓣
+        function createPetals() {
+            const petalCount = 30;
+            const petalColors = ['#ffb6c1', '#ffc0cb', '#ff69b4', '#ff1493', '#db7093'];
+            const petalShapes = ['❀', '✿', '❁', '❃', '❋', '❦', '❧', '✾', '♡'];
+
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.textContent = petalShapes[Math.floor(Math.random() * petalShapes.length)];
+                petal.style.color = petalColors[Math.floor(Math.random() * petalColors.length)];
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                petal.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                petal.style.animationDelay = (Math.random() * 5) + 's';
+                petalsContainer.appendChild(petal);
+            }
+        }
+
+        // 创建浮动爱心
+        function createFloatingHearts() {
+            const heartCount = 15;
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = '♥';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                heart.style.opacity = Math.random() * 0.5 + 0.1;
+                floatingHearts.appendChild(heart);
+            }
+        }
+
+        // 页面加载时创建花瓣和浮动爱心
+        window.addEventListener('load', function () {
+            createPetals();
+            createFloatingHearts();
+
+            // 用户交互后播放背景音乐
+            document.addEventListener('click', function () {
+                bgMusic.play().catch(e => console.log('无法自动播放音乐:', e));
+            }, { once: true });
+        });
+
+        // 记录点击"不愿意"的次数
+        let declineCount = 0;
+
+        // 表情状态
+        const expressions = [
+            'normal',   // 初始表情
+            'sad',      // 第一次点击"不愿意"
+            'worried',  // 第二次点击"不愿意"
+            'crying',   // 第三次点击"不愿意"
+            'happy'     // 点击"愿意"
+        ];
+
+        // 设置初始表情
+        character.classList.add(expressions[0]);
+
+        // 点击"不愿意"按钮
+        declineBtn.addEventListener('click', function () {
+            declineCount++;
+
+            if (declineCount <= 3) {
+                // 更新表情
+                character.className = 'cartoon-character ' + expressions[declineCount];
+
+                // 调整按钮大小和位置
+                const declineScale = 1 - (declineCount * 0.2);
+                const acceptScale = 1 + (declineCount * 0.3); // 增大变化幅度
+
+                declineBtn.style.transform = `scale(${declineScale})`;
+                acceptBtn.style.transform = `scale(${acceptScale})`;
+
+                // 让"愿意"按钮向中心移动
+                acceptBtn.style.position = 'relative';
+                acceptBtn.style.zIndex = '10';
+                acceptBtn.style.fontSize = `${16 + (declineCount * 2)}px`;
+                acceptBtn.style.padding = `${10 + (declineCount * 5)}px ${30 + (declineCount * 10)}px`;
+            }
+
+            // 第四次点击后隐藏"不愿意"按钮，让"愿意"按钮撑满中心
+            if (declineCount >= 4) {
+                declineBtn.style.display = 'none';
+                character.className = 'cartoon-character crying';
+
+                // 移除按钮容器的样式，让"愿意"按钮可以全屏定位
+                buttonsContainer.style.maxWidth = 'none';
+                buttonsContainer.style.width = '100%';
+
+                // 将"愿意"按钮设置为撑满中心
+                acceptBtn.className = 'btn accept full-center';
+            }
+        });
+
+        // 点击"愿意"按钮
+        acceptBtn.addEventListener('click', function () {
+            // 隐藏原来的卡通形象，显示拥抱形象
+            character.style.display = 'none';
+            huggingCharacters.style.display = 'block';
+
+            // 隐藏"不愿意"按钮
+            declineBtn.style.display = 'none';
+
+            // 将"愿意"按钮设置为中间靠下位置，并调整为合适大小
+            acceptBtn.className = 'btn accept full-center';
+
+            // 创建更多花瓣庆祝
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.textContent = '❤';
+                    petal.style.color = '#ff1493';
+                    petal.style.left = Math.random() * 100 + 'vw';
+                    petal.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                    petal.style.animationDuration = (Math.random() * 5 + 3) + 's';
+                    petalsContainer.appendChild(petal);
+                }, i * 100);
+            }
+
+            // 创建并显示弹出消息
+            const messagePopup = document.createElement('div');
+            messagePopup.className = 'message-popup';
+            messagePopup.textContent = '我就知道你最喜欢我了';
+            document.body.appendChild(messagePopup);
+
+            // 3秒后移除弹窗
+            setTimeout(() => {
+                messagePopup.style.opacity = '0';
+                messagePopup.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    document.body.removeChild(messagePopup);
+                }, 500);
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>
